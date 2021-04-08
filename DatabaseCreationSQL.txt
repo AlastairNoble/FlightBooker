@@ -1,0 +1,144 @@
+drop database airlinedb;
+
+create database airlinedb;
+
+
+
+create table Airport(
+
+    code char(3) not null primary key,
+
+    name varchar(200),
+
+    city varchar(100),
+
+    province char(2));
+
+
+create table AirplaneType(
+
+    name varchar(100) not null primary key,
+
+    maxSeats integer,
+
+    company varchar(100));
+
+create table Airline(
+
+    code char(5) not null primary key,
+
+    name varchar(100));
+
+create table Airplane(
+
+    id char(10) not null primary key,
+
+    owner char(5) not null,
+
+    year integer,
+
+    type varchar(100) not null,
+
+    foreign key (owner) references Airline(code) on delete cascade,
+
+    foreign key (type) references AirplaneType(name));
+
+
+create table Flight(
+
+    airlineCode char(5) not null,
+
+    flightCode integer not null,
+
+    arrivalScheduledTime time,
+
+    arrivalActualTime time,
+
+    departureScheduledTime time,
+
+    departureArrivalTime time,
+
+    arrivalAirport char(3) not null,
+
+    departureAirport char(3) not null,
+
+    airplane char(10) not null,
+
+    primary key(airlineCode, flightCode),
+
+    foreign key (arrivalAirport) references Airport (code) on delete cascade,
+
+    foreign key (departureAirport) references Airport (code) on delete cascade,
+
+    foreign key (airplane) references Airplane(id) on delete restrict,
+
+    foreign key (airlineCode) references Airline(code) on delete cascade);
+
+
+
+create table Handles(
+
+    airportCode char(3) not null,
+
+    aircraftType varchar(100) not null,
+
+    primary key(airportCode, aircraftType),
+
+    foreign key (airportCode) references Airport(code) on delete cascade,
+
+    foreign key (aircraftType) references AirplaneType (name) on delete cascade);
+
+
+create table DaysOffered(
+
+    airlineCode char(5) not null,
+
+    flightCode integer not null,
+
+    day char(9) not null,
+
+    primary key(airlineCode, flightCode, day),
+
+    foreign key (airlineCode, flightCode) references Flight(airlineCode, flightCode) on delete cascade);
+
+
+INSERT INTO airline VALUES('AC','Air Canada');
+INSERT INTO airline VALUES('WJ','West Jet');
+INSERT INTO airline VALUES('QA','Quantas');
+INSERT INTO airline VALUES('SW','Swoop');
+INSERT INTO airport VALUES('YVR','Vancouver Airport', 'Vancouver', 'BC');
+INSERT INTO airport VALUES('YYC','Calgary Airport', 'Calgary', 'AB');
+INSERT INTO airport VALUES('YYZ','Pearson', 'Toronto', 'ON');
+INSERT INTO airplaneType VALUES('787', 80, 'Boeing');
+INSERT INTO airplaneType VALUES('666',45, 'Boeing');
+INSERT INTO airplaneType VALUES('767', 60, 'Boeing');
+INSERT INTO airplane VALUES('Plane10',  'SW',1999, '666');
+INSERT INTO airplane VALUES('Plane11',  'QA',1969, '666');
+INSERT INTO airplane VALUES('Plane12',  'AC',1999, '787');
+INSERT INTO airplane VALUES('Plane13',  'WJ',1989, '767');
+INSERT INTO flight VALUES('AC',1234,'09:22:00','09:22:00','10:22:00', null,'YVR','YYZ','Plane12');
+INSERT INTO flight VALUES('AC',1235,'09:22:00',  '09:22:00','10:22:00', null,'YYZ','YYC','Plane12');
+INSERT INTO flight VALUES('AC',1236,'09:22:00',  null,'10:22:00', null,'YYC','YVR','Plane12');
+INSERT INTO flight VALUES('AC',1237,'09:22:00', ,null, '10:22:00', null,'YYC','YYZ','Plane12');
+INSERT INTO flight VALUES('WJ',1111,'06:22:00', ,null, '09:22:00', null, 'YYZ','YVR','Plane13');
+INSERT INTO flight VALUES('WJ',1112,'06:22:00', ,null, '09:22:00', null, 'YYZ','YYC','Plane13');
+INSERT INTO flight VALUES('SW',9009,'06:22:00', ,null, '09:22:00', null, 'YYC','YVR','Plane13');
+INSERT INTO flight VALUES('WJ',1113,'06:22:00', ,null, '09:22:00', null, 'YYZ','YVR','Plane10');
+INSERT INTO flight VALUES('SW',9098,'06:22:00', ,null, '09:22:00', null, 'YYZ','YYC','Plane10');
+INSERT INTO flight VALUES('SW',9987,'06:22:00', ,null, '09:22:00', null, 'YYC','YVR','Plane10');
+INSERT into DaysOffered VALUES('WJ', 1111, 'Monday');
+INSERT into DaysOffered VALUES('WJ', 1111, 'Tuesday');
+INSERT into DaysOffered VALUES('WJ', 1111, 'Wednesday');
+INSERT into DaysOffered VALUES('WJ', 1112, 'Tursday');
+INSERT into DaysOffered VALUES('WJ', 1113, 'Monday');
+INSERT into DaysOffered VALUES('WJ', 1113, 'Tuesday');
+INSERT into DaysOffered VALUES('AC', 1234, 'Friday');
+INSERT into DaysOffered VALUES('AC', 1235, 'Friday');
+INSERT into DaysOffered VALUES('AC', 1237, 'Friday');
+INSERT into DaysOffered VALUES('AC', 1236, 'Thursday');
+INSERT into DaysOffered VALUES('AC', 1234, 'Saturday');
+INSERT into DaysOffered VALUES('SW', 9009, 'Friday');
+INSERT into DaysOffered VALUES('SW', 9098, 'Sunday');
+INSERT into DaysOffered VALUES('SW', 9009, 'Sunday');
+INSERT into DaysOffered VALUES('SW', 9009, 'Monday');
+
